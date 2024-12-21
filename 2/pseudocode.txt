@@ -1,0 +1,95 @@
+program Perpustakaan
+
+kamus
+
+constant nMax : integer = 7919
+
+type Buku = <
+    id, judul, penulis, penerbit : string,
+    eksemplar, tahun, rating : integer >
+
+type DaftarBuku = <
+    pustaka : array [1..nMax] of Buku,
+    n : integer >
+
+var pustaka : DaftarBuku
+    nPustaka : integer
+    ratingCari : integer
+
+algoritma
+
+procedure DaftarkanBuku(in/out pustaka : DaftarBuku, inout n : integer)
+begin
+    input(n) // Membaca jumlah buku
+    for i = 1 to n do
+        input(pustaka[i].id, pustaka[i].judul, pustaka[i].penulis, pustaka[i].penerbit)
+        input(pustaka[i].eksemplar, pustaka[i].tahun, pustaka[i].rating)
+end
+
+procedure CetakTerfavorit(in pustaka : DaftarBuku, in n : integer)
+var
+    maxRating : integer
+    idxTerfavorit : integer
+begin
+    maxRating := -1
+    for i = 1 to n do
+        if pustaka[i].rating > maxRating then
+            maxRating := pustaka[i].rating
+            idxTerfavorit := i
+    output(pustaka[idxTerfavorit].judul, pustaka[idxTerfavorit].penulis, pustaka[idxTerfavorit].penerbit, pustaka[idxTerfavorit].tahun)
+end
+
+procedure UrutBuku(in/out pustaka : DaftarBuku, in n : integer)
+var
+    i, j : integer
+    temp : Buku
+begin
+    for i = 2 to n do
+        temp := pustaka[i]
+        j := i - 1
+        while (j > 0) and (pustaka[j].rating < temp.rating) do
+            pustaka[j + 1] := pustaka[j]
+            j := j - 1
+        pustaka[j + 1] := temp
+end
+
+procedure Cetak5Terbaru(in pustaka : DaftarBuku, in n : integer)
+var
+    i : integer
+begin
+    for i = 1 to 5 do
+        if i > n then break
+        output(pustaka[i].judul)
+end
+
+procedure CariBuku(in pustaka : DaftarBuku, in n : integer, in r : integer)
+var
+    low, high, mid : integer
+    found : boolean
+begin
+    low := 1
+    high := n
+    found := false
+    while (low <= high) do
+        mid := (low + high) div 2
+        if pustaka[mid].rating = r then
+            output(pustaka[mid].judul, pustaka[mid].penulis, pustaka[mid].penerbit, pustaka[mid].tahun, pustaka[mid].eksemplar, pustaka[mid].rating)
+            found := true
+            break
+        else if pustaka[mid].rating < r then
+            high := mid - 1
+        else
+            low := mid + 1
+    if not found then
+        output("Tidak ada buku dengan rating seperti itu")
+end
+
+// Main Program
+DaftarkanBuku(pustaka, nPustaka)
+CetakTerfavorit(pustaka, nPustaka)
+UrutBuku(pustaka, nPustaka)
+Cetak5Terbaru(pustaka, nPustaka)
+input(ratingCari)
+CariBuku(pustaka, nPustaka, ratingCari)
+
+endprogram
